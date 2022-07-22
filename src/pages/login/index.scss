@@ -1,0 +1,35 @@
+.app-login-layout{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  // justify-content: center;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  .login-content{
+    width: 280px;
+    height: 400px;
+    padding: 24px;
+    .login-name-input, .login-pass-input, .login-pass-code{
+      width: 100%;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid rgba(217, 220, 222);
+      box-shadow: none;
+    }
+    .login-name-input{
+      // width: 100%;
+    }
+    .login-pass-input{
+      // width: 100%;
+    }
+    .login-pass-code{
+
+    }
+    .login-btn{
+      width: 1px;
+      height: 1px;
+      visibility: hidden;
+    }
+  }
+}
