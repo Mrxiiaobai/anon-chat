@@ -198,6 +198,10 @@ module.exports = function (webpackEnv) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: paths.appIndexJs,
+    // devServer:{
+    //   // historyApiFallback:true,
+    //   disableDotRule: true,
+    // },
     output: {
       // The build folder.
       path: paths.appBuild,
@@ -216,7 +220,8 @@ module.exports = function (webpackEnv) {
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.publicUrlOrPath,
+      // publicPath: paths.publicUrlOrPath,
+      publicPath: '/',
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info => path
@@ -308,7 +313,6 @@ module.exports = function (webpackEnv) {
         '@':path.resolve(__dirname, '../src'),
         '@pages':path.resolve(__dirname, '../src/pages'),
         '@components':path.resolve(__dirname, '../src/components'),
-        '@common':path.resolve(__dirname, '../src/common'),
         '@services':path.resolve(__dirname, '../src/services'),
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',

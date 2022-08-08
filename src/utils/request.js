@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { notification } from 'antd';
+import axios from 'axios'
+import { notification } from 'antd'
 // import router from 'umi/router';
-import { GetLocalStorage, RemoveAllStorage } from './local';
+import { GetLocalStorage } from './local'
 // import { Utils } from './utils';
 
 const codeMessage = {
@@ -20,14 +20,13 @@ const codeMessage = {
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
-};
+}
 
 const instance = axios.create({
   timeout: 10000,
-});
+})
 
-instance.defaults.headers.common['token'] = GetLocalStorage('token')
-
+instance.defaults.headers.common.token = GetLocalStorage('token')
 
 // // 请求拦截器
 // instance.interceptors.request.use(req=>{
@@ -44,66 +43,70 @@ instance.defaults.headers.common['token'] = GetLocalStorage('token')
 
 const checkStatus = response => {
   if (response.status >= 200 && response.status < 300) {
-    return response;
+    return response
   }
-  const errortext = codeMessage[response.status] || response.statusText;
+  const errortext = codeMessage[response.status] || response.statusText
   notification.error({
     message: errortext,
-    duration:2
-  });
-  const error = new Error(errortext);
-  error.name = response.status;
-  error.response = response;
-  throw error;
-};
+    duration:2,
+  })
+  const error = new Error(errortext)
+  error.name = response.status
+  error.response = response
+  throw error
+}
 
 const checkCode = response => {
   const { data } = response
   const { code, message } = data
-  if(code < 0){
+  if (code < 0) {
     return { data:'', message }
   }
   return data
 }
 
 const requestMethods = {
-  'POST':(url, params, headers)=>instance.post(url, params, { headers, }),
-  'GET':(url, params, headers)=>instance.get(url, { ...params, ...headers }),
+  'POST':(url, params, headers) => instance.post(url, params, { headers }),
+  'GET':(url, params, headers) => instance.get(url, { ...params, ...headers }),
 }
 
-export default function request(url, option, errorCallback) {
-  let _url = '';
-  let options = { ...option };
-  const headers = Object.assign({}, option.headers);
-  const newOptions = {  ...options, headers };
+export default function request(url, option) {
+  // let _url = ''
+  const options = { ...option }
+  // const token = GetGlobalToken()
+  const headers = { ...option.headers }
+  const newOptions = {  ...options, headers }
+  // const headers = { ...(token ? { token } : {}) }
+
+  // const newOptions = { ...options, headers }
   if (
-    newOptions.method === 'POST' ||
-    newOptions.method === 'PUT' ||
-    newOptions.method === 'DELETE'
+    newOptions.method === 'POST'
+    || newOptions.method === 'PUT'
+    || newOptions.method === 'DELETE'
   ) {
-    _url = url;
+    // _url = url
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
         ...newOptions.headers,
-      };
+      }
     } else {
       newOptions.headers = {
         Accept: 'application/json',
         ...newOptions.headers,
-      };
+      }
     }
   }
   const { body, method } = newOptions
   return requestMethods[method](url, body, newOptions.headers)
-  .then(checkStatus)
-  .then(checkCode)
-  .then(response => {
-    console.log(response, '-----response------')
-    return response;
-  })
-  .catch(e => {
-    console.log(e);
-  });
+    .then(checkStatus)
+    .then(checkCode)
+    .then(response => {
+      console.log(response, '-----response------')
+      return response
+    })
+    .catch(e => {
+      console.log(e)
+    })
 }

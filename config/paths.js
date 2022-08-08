@@ -1,14 +1,12 @@
-'use strict';
-
-const path = require('path');
-const fs = require('fs');
-const glob = require("glob");
-const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
+const path = require('path')
+const fs = require('fs')
+const glob = require('glob')
+const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath')
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const appDirectory = fs.realpathSync(process.cwd())
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
@@ -20,9 +18,9 @@ const publicUrlOrPath = getPublicUrlOrPath(
   process.env.NODE_ENV === 'development',
   require(resolveApp('package.json')).homepage,
   process.env.PUBLIC_URL
-);
+)
 
-const buildPath = process.env.BUILD_PATH || 'build';
+const buildPath = process.env.BUILD_PATH || 'dist'
 
 const moduleFileExtensions = [
   'web.mjs',
@@ -36,44 +34,42 @@ const moduleFileExtensions = [
   'json',
   'web.jsx',
   'jsx',
-];
+]
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
-  const extension = moduleFileExtensions.find(extension =>
-    fs.existsSync(resolveFn(`${filePath}.${extension}`))
-  );
+  const extension = moduleFileExtensions.find(extension => fs.existsSync(resolveFn(`${ filePath }.${ extension }`)))
 
   if (extension) {
-    return resolveFn(`${filePath}.${extension}`);
+    return resolveFn(`${ filePath }.${ extension }`)
   }
 
-  return resolveFn(`${filePath}.js`);
-};
+  return resolveFn(`${ filePath }.js`)
+}
 
 const getEntries = globPath => {
-  const files = glob.sync(globPath),
-    entries = {};
-  files.forEach(function(filepath) {
-    const split = filepath.split('/');
-    const name = split[split.length - 2];
-    entries[name] = './' + filepath;
-  });
-  return entries;
+  const files = glob.sync(globPath)
+  const entries = {}
+  files.forEach(filepath => {
+    const split = filepath.split('/')
+    const name = split[split.length - 2]
+    entries[name] = `./${  filepath }`
+  })
+  return entries
 }
-const entries = getEntries('src/pages/**/index.js');
+const entries = getEntries('src/pages/**/index.jsx')
 
-//这里将入口对象转为路径数组
+// 这里将入口对象转为路径数组
 const getIndexJs = () => {
-  const indexJsList = [];
-  Object.keys(entries).forEach((name) => {
-    const indexjs = resolveModule(resolveApp, `src/pages/${name}/index`)
+  const indexJsList = []
+  Object.keys(entries).forEach(name => {
+    const indexjs = resolveModule(resolveApp, `src/pages/${ name }/index`)
     indexJsList.push({
       name,
-      path: indexjs
-    });
+      path: indexjs,
+    })
   })
-  return indexJsList;
+  return indexJsList
 }
 const indexJsList = getIndexJs()
 
@@ -99,8 +95,6 @@ module.exports = {
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
   entries,
-};
+}
 
-
-
-module.exports.moduleFileExtensions = moduleFileExtensions;
+module.exports.moduleFileExtensions = moduleFileExtensions

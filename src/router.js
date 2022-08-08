@@ -21,9 +21,10 @@ const Routers = () => (
   <BrowserRouter>
     <AppContext>
       <Switch>
-        <Route exact path='/anon/home' component={ Home } root={ true } />
-        <Route exact path='/anon/login' component={ Login } />
-        <Route exact path='*' component={ noRoute } />
+        {/* <Route exact path='/anon/home' component={ Home } root={ true } /> */}
+        <Route exact path='/anon/login' root={ true } component={ Login } />
+        <Route path='/anon/home' component={ Home } />
+        <Route path='*' component={ noRoute } />
       </Switch>
     </AppContext>
   </BrowserRouter>

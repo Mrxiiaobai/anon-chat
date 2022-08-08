@@ -1,7 +1,11 @@
-import login from "./login";
+import Login from './login'
+import Home from './home'
 
-const loginStore = new login();
+const loginStore = new Login()
+const homeStore = new Home()
+
 const stores = {
   loginStore,
-};
-export default stores;
+  homeStore,
+}
+export default stores
