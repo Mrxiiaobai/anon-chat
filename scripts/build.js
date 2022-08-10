@@ -27,7 +27,7 @@ const { measureFileSizesBeforeBuild } = FileSizeReporter
 const { printFileSizesAfterBuild } = FileSizeReporter
 
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
-const configFactory = require('../config/webpack.development.config')
+const configFactory = require('../config/webpack.production.config')
 const paths = require('../config/paths')
 
 const config = configFactory('production')

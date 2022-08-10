@@ -4,6 +4,8 @@ import {
 } from 'antd'
 import { inject, observer } from 'mobx-react'
 
+import { SmileOutlined } from '@ant-design/icons'
+
 import './index.scss'
 
 const FormItem = Form.Item
@@ -29,7 +31,7 @@ class Login extends React.PureComponent {
 
   successBack = () => {
     const { history } = this.props
-    if (!window.electronApi) history.push('anon/home')
+    if (!window.electronApi) history.push('/anon/home')
     window.electronApi.ipcRenderer.send('close')
     window.electronApi.ipcRenderer.send('openMainWindow')
   }
@@ -65,12 +67,18 @@ class Login extends React.PureComponent {
     })
   }
 
+  handleGoFacePage = () => {
+    const { history } = this.props
+    history.replace('/anon/face')
+  }
+
   render() {
     const { loginPage } = this.state
     return (
       <Layout className='app-login-layout'>
         <div className='login-content'>
           <Form
+            className='app-login-form'
             name='validate_other'
             onFinish={ this.onFinish }
           >
@@ -101,8 +109,14 @@ class Login extends React.PureComponent {
             <Button type='primary' htmlType='submit' className='login-btn'>
               Submit
             </Button>
-            { loginPage ? <p onClick={ () => { this.handleChangePage(false) }  }>注册</p> : <p onClick={ () => { this.handleChangePage(true) }  }>登录</p> }
           </Form>
+          { loginPage ? (
+            <p onClick={ () => { this.handleChangePage(false) }  }>去注册 </p>
+          ) : <p onClick={ () => { this.handleChangePage(true) }  }>去登录</p> }
+          <div className='app-face-login'>
+            <SmileOutlined className='app-face-icon' onClick={ this.handleGoFacePage } />
+            <span>人脸登录</span>
+          </div>
         </div>
       </Layout>
     )

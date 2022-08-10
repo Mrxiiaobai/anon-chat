@@ -307,6 +307,7 @@ module.exports = function (webpackEnv) {
         // Support React Native Web
         '@':path.resolve(__dirname, '../src'),
         '@pages':path.resolve(__dirname, '../src/pages'),
+        '@models':path.resolve(__dirname, '../src/models'),
         '@components':path.resolve(__dirname, '../src/components'),
         '@common':path.resolve(__dirname, '../src/common'),
         '@services':path.resolve(__dirname, '../src/services'),
@@ -335,6 +336,9 @@ module.exports = function (webpackEnv) {
           babelRuntimeRegenerator,
         ]),
       ],
+    },
+    externals: {
+      fs: require('fs'),
     },
     module: {
       strictExportPresence: true,

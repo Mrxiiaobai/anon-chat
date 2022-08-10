@@ -16,7 +16,6 @@ const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const ESLintPlugin = require('eslint-webpack-plugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-
 const paths = require('./paths')
 const modules = require('./modules')
 const getClientEnvironment = require('./env')
@@ -184,13 +183,6 @@ module.exports = function (webpackEnv) {
     return loaders
   }
 
-  const entry = {}
-  paths.appIndexJsList.forEach(e => {
-    entry[e.name] = [
-      isEnvDevelopment && !shouldUseReactRefresh,
-      e.path,
-    ].filter(Boolean)
-  })
   return {
     target: ['browserslist'],
     // Webpack noise constrained to errors and warnings
@@ -198,12 +190,6 @@ module.exports = function (webpackEnv) {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
-    // external:{
-    //   fs:require('fs'),
-    // },
-    // node:{
-    //   fs:require('fs'),
-    // },
     devtool: isEnvProduction
       ? shouldUseSourceMap
         ? 'source-map'
@@ -211,7 +197,11 @@ module.exports = function (webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry,
+    entry: paths.appIndexJs,
+    // devServer:{
+    //   // historyApiFallback:true,
+    //   disableDotRule: true,
+    // },
     output: {
       // The build folder.
       path: paths.appBuild,
@@ -219,14 +209,19 @@ module.exports = function (webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction ? '[name]/static/js/[name].[contenthash:8].js' : isEnvDevelopment && 'static/js/bundle.js',
+      filename: isEnvProduction
+        ? 'static/js/[name].[contenthash:8].js'
+        : isEnvDevelopment && 'static/js/bundle.js',
       // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction ? '[name]/static/js/[name].[contenthash:8].chunk.js'  : isEnvDevelopment && 'static/js/[name].chunk.js',
+      chunkFilename: isEnvProduction
+        ? 'static/js/[name].[contenthash:8].chunk.js'
+        : isEnvDevelopment && 'static/js/[name].chunk.js',
       assetModuleFilename: 'static/media/[name].[hash][ext]',
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.publicUrlOrPath,
+      // publicPath: paths.publicUrlOrPath,
+      publicPath: '/',
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info => path
@@ -317,6 +312,8 @@ module.exports = function (webpackEnv) {
         // Support React Native Web
         '@':path.resolve(__dirname, '../src'),
         '@pages':path.resolve(__dirname, '../src/pages'),
+        '@models':path.resolve(__dirname, '../src/models'),
+        '@common':path.resolve(__dirname, '../src/common'),
         '@components':path.resolve(__dirname, '../src/components'),
         '@services':path.resolve(__dirname, '../src/services'),
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -344,6 +341,9 @@ module.exports = function (webpackEnv) {
           babelRuntimeRegenerator,
         ]),
       ],
+    },
+    externals: {
+      fs: require('fs'),
     },
     module: {
       strictExportPresence: true,
@@ -573,59 +573,29 @@ module.exports = function (webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      ...Object.keys(paths.entries).map(name => {
-        return new HtmlWebpackPlugin(
-          {
+      new HtmlWebpackPlugin(
+        {
 
-            inject: true,
-            chunks: [name],
-            template: paths.appHtml,
-            filename: `${ name  }/index.html`,
-            ...(isEnvProduction
-              ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-              : undefined),
-          }
-        )
-      }),
-      // Generates an `index.html` file with the <script> injected.
-      // new HtmlWebpackPlugin(
-      //   Object.assign(
-      //     {},
-      //     {
-      //       inject: true,
-      //       template: paths.appHtml,
-      //     },
-      //     isEnvProduction
-      //       ? {
-      //           minify: {
-      //             removeComments: true,
-      //             collapseWhitespace: true,
-      //             removeRedundantAttributes: true,
-      //             useShortDoctype: true,
-      //             removeEmptyAttributes: true,
-      //             removeStyleLinkTypeAttributes: true,
-      //             keepClosingSlash: true,
-      //             minifyJS: true,
-      //             minifyCSS: true,
-      //             minifyURLs: true,
-      //           },
-      //         }
-      //       : undefined
-      //   )
-      // ),
+          inject: true,
+          template: paths.appHtml,
+          ...(isEnvProduction
+            ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+            : undefined),
+        }
+      ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
@@ -662,8 +632,8 @@ module.exports = function (webpackEnv) {
         && new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
           // both options are optional
-          filename: '[name]/css/[name].[contenthash:8].css',
-          chunkFilename: '[name]/css/[name].[contenthash:8].chunk.css',
+          filename: 'static/css/[name].[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding
@@ -675,28 +645,14 @@ module.exports = function (webpackEnv) {
         fileName: 'asset-manifest.json',
         publicPath: paths.publicUrlOrPath,
         generate: (seed, files, entrypoints) => {
-          // const manifestFiles = files.reduce((manifest, file) => {
-          //   manifest[file.name] = file.path;
-          //   return manifest;
-          // }, seed);
-          // const entrypointFiles = entrypoints.main.filter(
-          //   fileName => !fileName.endsWith('.map')
-          // );
-
           const manifestFiles = files.reduce((manifest, file) => {
             manifest[file.name] = file.path
             return manifest
           }, seed)
-          // const entrypointFiles = entrypoints.main.filter(
-          //   fileName => !fileName.endsWith('.map')
-          // );
-          const entrypointFiles = {}
-          Object.keys(entrypoints).forEach(entrys => {
-            const filesArr = entrypoints[entrys].filter(
-              fileName => !fileName.endsWith('.map')
-            )
-            entrypointFiles[entrys] = filesArr
-          })
+          const entrypointFiles = entrypoints.main.filter(
+            fileName => !fileName.endsWith('.map')
+          )
+
           return {
             files: manifestFiles,
             entrypoints: entrypointFiles,
@@ -779,9 +735,9 @@ module.exports = function (webpackEnv) {
           extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
           formatter: require.resolve('react-dev-utils/eslintFormatter'),
           eslintPath: require.resolve('eslint'),
-          // failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
           failOnError: false,
           failOnWarning: false,
+          // failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
           context: paths.appSrc,
           cache: true,
           cacheLocation: path.resolve(

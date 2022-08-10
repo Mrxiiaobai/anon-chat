@@ -7,9 +7,16 @@
   justify-content: center;
   background-color: #FFFFFF;
   .login-content{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     width: 280px;
-    // height: 400px;
-    padding: 24px;
+    height: 400px;
+    padding: 24px 0;
+    .app-login-form{
+      width: 75%;
+    }
     .login-name-input, .login-pass-input, .login-pass-code{
       width: 100%;
       outline: none;
@@ -36,8 +43,32 @@
       visibility: hidden;
     }
     p{
+      width: 75%;
       cursor: pointer;
-      color: skyblue;
+      font-size: 12px;
+      font-weight: 500;
+      color: #181717;
+      margin-top: -10px;
+      // color: skyblue;
+    }
+
+    .app-face-login{
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .app-face-icon{
+        font-size: 25px;
+        cursor: pointer;
+      }
+      span{
+        font-size: 12px;
+        font-weight: 500;
+        color: #181717;
+        margin-top: 5px;
+      }
     }
   }
 }

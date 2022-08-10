@@ -26,7 +26,7 @@ const instance = axios.create({
   timeout: 10000,
 })
 
-instance.defaults.headers.common.token = GetLocalStorage('token')
+// instance.defaults.headers.common.token = GetLocalStorage('token')
 
 // // 请求拦截器
 // instance.interceptors.request.use(req=>{
@@ -67,18 +67,22 @@ const checkCode = response => {
 
 const requestMethods = {
   'POST':(url, params, headers) => instance.post(url, params, { headers }),
-  'GET':(url, params, headers) => instance.get(url, { ...params, ...headers }),
+  'GET':(url, params, headers) => instance.get(url, {
+    params: {
+      ...params,
+    },
+  }, { ...headers }),
 }
 
 export default function request(url, option) {
   // let _url = ''
   const options = { ...option }
-  // const token = GetGlobalToken()
-  const headers = { ...option.headers }
-  const newOptions = {  ...options, headers }
-  // const headers = { ...(token ? { token } : {}) }
+  const token = GetLocalStorage('token')
+  // const headers = { ...option.headers }
+  // const newOptions = {  ...options, headers }
+  const headers = { ...(token ? { token } : {}) }
 
-  // const newOptions = { ...options, headers }
+  const newOptions = { ...options, headers }
   if (
     newOptions.method === 'POST'
     || newOptions.method === 'PUT'
