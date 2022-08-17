@@ -25,7 +25,11 @@ const codeMessage = {
 const instance = axios.create({
   timeout: 10000,
 })
-
+const baseURLEnv = {
+  'development' : '',
+  'production' : 'https://configure.otosaas.com/',
+}
+instance.defaults.baseURL = baseURLEnv[process.env.NODE_ENV]
 // instance.defaults.headers.common.token = GetLocalStorage('token')
 
 // // 请求拦截器
@@ -78,11 +82,13 @@ export default function request(url, option) {
   // let _url = ''
   const options = { ...option }
   const token = GetLocalStorage('token')
+  const accessTokenInfo = GetLocalStorage('accessTokenInfo')
   // const headers = { ...option.headers }
   // const newOptions = {  ...options, headers }
   const headers = { ...(token ? { token } : {}) }
-
-  const newOptions = { ...options, headers }
+  // if (accessTokenInfo.accessToken) headers.access_token = accessTokenInfo.accessToken
+  if (accessTokenInfo.accessToken) headers.accesstoken = accessTokenInfo.accessToken
+  const newOptions = { ...options, headers  }
   if (
     newOptions.method === 'POST'
     || newOptions.method === 'PUT'

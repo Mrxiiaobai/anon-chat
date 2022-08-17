@@ -83,7 +83,12 @@ class Login extends React.PureComponent {
       }
       this.handleReset()
       if (error_code === 0) {
-        message.loading('', 0)
+        if (!result.user_list) {
+          this.setState({
+            replyFace:true,
+          })
+          message.warning('请设置人脸登录')
+        }
         this.handleFaceLogin(result?.user_list[0])
       } else {
         this.setState({
@@ -162,8 +167,13 @@ class Login extends React.PureComponent {
       <Layout className='app-facelogin-layout'>
         <Spin spinning={ loginLoading }>
           <div className='login-content'>
-            <video id='video' crossOrigin='anonymous' width='280' height='400' muted autoPlay ref={ this.videoRef } playsInline />
-            <canvas id='canvas' ref={ this.canvasRef } style={{ display:'none' }} />
+            { !loginLoading && (
+            <>
+              <video id='video' crossOrigin='anonymous' width='280' height='400' muted autoPlay ref={ this.videoRef } playsInline />
+              <canvas id='canvas' ref={ this.canvasRef } style={{ display:'none' }} />
+            </>
+            ) }
+
             { startFaceFlag ? '' : (
               <div className='app-face-login'>
                 <SmileOutlined className='app-face-icon' onClick={ this.handleStartFaceMatch } />

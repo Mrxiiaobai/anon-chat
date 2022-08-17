@@ -5,8 +5,8 @@ import request from '@/utils/request'
  * @param params
  */
 export async function getAccessToken(params = {}, headers = {}) {
-  return request('https://aip.baidubce.com/oauth/2.0/token', {
-    method: 'GET',
+  return request('/api/v1/anonymous/getAccessToken', {
+    method: 'POST',
     body: params,
     headers,
   })
@@ -16,8 +16,8 @@ export async function getAccessToken(params = {}, headers = {}) {
  * 人脸对比
  * @param params
  */
-export async function faceMatch(params = {}, headers = {}, access_token = '') {
-  return request(`https://aip.baidubce.com/rest/2.0/face/v3/match?access_token=${ access_token }`, {
+export async function faceMatch(params = {}, headers = {}) {
+  return request('/api/v1/anonymous/faceMatch', {
     method: 'POST',
     body: params,
     headers,
@@ -28,8 +28,8 @@ export async function faceMatch(params = {}, headers = {}, access_token = '') {
  * 人脸检测
  * @param params
  */
-export async function faceDetect(params = {}, headers = {}, access_token = '') {
-  return request(`https://aip.baidubce.com/rest/2.0/face/v3/detect?access_token=${ access_token }`, {
+export async function faceDetect(params = {}, headers = {}) {
+  return request('/api/v1/anonymous/faceDetect', {
     method: 'POST',
     body: params,
     headers,
@@ -40,8 +40,8 @@ export async function faceDetect(params = {}, headers = {}, access_token = '') {
  * 人脸注册
  * @param params
  */
-export async function faceAdd(params = {}, headers = {}, access_token = '') {
-  return request(`https://aip.baidubce.com/rest/2.0/face/v3/faceset/user/add?access_token=${ access_token }`, {
+export async function faceAdd(params = {}, headers = {}) {
+  return request('/api/v1/anonymous/faceAdd', {
     method: 'POST',
     body: params,
     headers,
@@ -52,8 +52,8 @@ export async function faceAdd(params = {}, headers = {}, access_token = '') {
  * 人脸搜索1:N
  * @param params
  */
-export async function faceSearch(params = {}, headers = {}, access_token = '') {
-  return request(`https://aip.baidubce.com/rest/2.0/face/v3/search?access_token=${ access_token }`, {
+export async function faceSearch(params = {}, headers = {}) {
+  return request('/api/v1/anonymous/faceSearch', {
     method: 'POST',
     body: params,
     headers,
@@ -65,7 +65,7 @@ export async function faceSearch(params = {}, headers = {}, access_token = '') {
  * @param params
  */
 export async function faceLogin(params = {}, headers = {}) {
-  return request('/api/v1/anonymous/login', {
+  return request('/api/v1/anonymous/facelogin', {
     method: 'POST',
     body: params,
     headers,

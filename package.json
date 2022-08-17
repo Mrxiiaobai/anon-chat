@@ -2,7 +2,7 @@
   "name": "anonchat",
   "version": "0.1.0",
   "private": true,
-  "productName": "Anon Chat",
+  "productName": "AnonChat",
   "main": "main.js",
   "homepage": ".",
   "dependencies": {
@@ -89,7 +89,8 @@
     "build": "node scripts/build",
     "test": "node scripts/test",
     "electron-dev": "electron . dev",
-    "electron": "electron ."
+    "electron": "electron .",
+    "make": "electron-forge make"
   },
   "browserslist": {
     "production": [
@@ -171,14 +172,14 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "Anon Chat",
+        "name": "AnonChat",
         "icon": "./logo/ANNOYMOUS.icns"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Anon Chat"
+            "name": "AnonChat"
           }
         },
         {

@@ -66,11 +66,12 @@
   }
   .app-content-layout{
     background-color: #FFFFFF;
-    border-left: 1px solid #ECF9F4;
+    border-left: 1px solid #1890ff;
     
     .app-content{
       .chatContainer {
         width: 100%;
+        height: 100%;
         // background: #fff
       }
       
@@ -88,7 +89,8 @@
       
       .chatContainer .chatDv {
         width: 100%;
-        height: 500px;
+        // height: 500px;
+        height: 100%;
         display: flex
       }
       
@@ -271,7 +273,7 @@
     }
     .app-content-header{
       background-color: #FFFFFF;
-      border-bottom: 1px solid #ECF9F4;
+      border-bottom: 1px solid #1890ff;
       padding: 0 20px;
       height: 70px;
       color: #151515;
@@ -288,7 +290,7 @@
     .app-footer{
       padding: 0;
       background: #FFFFFF;
-      border-top: 1px solid #ECF9F4;
+      border-top: 1px solid #1890ff;
       height: 160px;
       .app-input{
         width: 100%;

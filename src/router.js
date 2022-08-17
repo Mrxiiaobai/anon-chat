@@ -10,6 +10,7 @@ import Home from '@pages/home'
 import Facelogin from '@pages/faceLogin'
 // const Login = lazy(() => import('@pages/login'))
 // const Home = lazy(() => import('@pages/home'))
+// const Facelogin = lazy(() => import('@pages/faceLogin'))
 
 import '@/assets/styles/common.scss'
 
@@ -24,8 +25,8 @@ const Routers = () => (
       <Switch>
         {/* <Route exact path='/anon/home' component={ Home } root={ true } /> */}
         <Route exact path='/anon/login' root={ true } component={ Login } />
-        <Route path='/anon/home' component={ Home } />
-        <Route path='/anon/face' component={ Facelogin } />
+        <Route exact path='/anon/home' component={ Home } />
+        <Route exact path='/anon/face' component={ Facelogin } />
         <Route path='*' component={ noRoute } />
       </Switch>
     </AppContext>

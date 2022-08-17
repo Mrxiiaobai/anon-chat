@@ -7,10 +7,13 @@
 
 # testing
 /coverage
-
+/dist
 # production
 /build
-
+/out
+build
+dist
+out
 # misc
 .DS_Store
 .env.local

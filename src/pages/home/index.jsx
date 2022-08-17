@@ -18,8 +18,18 @@ import { GetLocalStorage, RemoveLocalStorage } from '@/utils/local'
 import logoImg from '@/assets/img/anonChat.png'
 import './index.scss'
 
-const socket = io('ws://localhost:9999')
+const socket = io('https://dev-configure.otosaas.com', {
+  transports: ['websocket', 'polling'],
+  withCredentials: true,
+})
+// const socket = io('ws://localhost:9999', {
+//   transports: ['pooling'],
+// })
+// const socket = io('ws://localhost:9999', {
+//   transports: ['webpack', 'polling'],
+// })
 
+console.log('home')
 const { Option } = Mentions
 const {
   Header, Sider, Content, Footer,
@@ -35,6 +45,7 @@ class App extends React.Component {
     super(props)
     this.canvasRef = React.createRef()
     this.videoRef = React.createRef()
+    this.chatUlRef = React.createRef()
     this.state = {
       mesg:'',
       chatMsg:{},
@@ -103,6 +114,7 @@ class App extends React.Component {
     const token = GetLocalStorage('token')
     if (!token) return
     const { nickName, userId } = userInfo
+    this.handleGetUserInfo()
     this.getGroupInfos(groupArr => {
       this.setState({
         userInfo,
@@ -144,7 +156,7 @@ class App extends React.Component {
   }
 
   handleGetServerMsg = () => {
-  //   // 服务器消息
+    // 服务器消息
     socket.on('server_msg', data => {
       console.log(data, '--收到消息-')
       const { chatMsg } = this.state
@@ -152,6 +164,16 @@ class App extends React.Component {
       const newChatMsg = chatMsg[data.roomId].concat(data)
       chatMsg[data.roomId] = newChatMsg
       console.log(chatMsg, '---')
+      if (window.electronApi) {
+        if (data.type === 1) {
+          window.electronApi.ipcRenderer.send('notifications', data.msg)
+        }
+        if (data.msg.indexOf('@') !== -1) {
+          window.electronApi.ipcRenderer.send('notifications', '有人@')
+        }
+      }
+      const chatUl = this.chatUlRef.current
+      chatUl.scrollTop = chatUl.scrollHeight
       this.setState({
         chatMsg,
       })
@@ -180,12 +202,20 @@ class App extends React.Component {
   handleSendMessage = e => {
     e.preventDefault()
     const { userInfo, currentChat, mesg } = this.state
+    const { userId } = userInfo
+    if (mesg === '') {
+      message.warning('请输入信息')
+      return
+    }
     console.log('发送消息')
     socket.emit('client_msg', {
       msg:mesg,
       nickName:userInfo.nickName,
       roomId: `room${ currentChat.value }`,
+      userId,
     })
+    const chatUl = this.chatUlRef.current
+    chatUl.scrollTop = chatUl.scrollHeight
     this.setState({
       mesg:'',
     })
@@ -233,6 +263,7 @@ class App extends React.Component {
           const context = canvas.getContext('2d')
           context.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight)// 绘制视频
           const imgUrl = canvas.toDataURL('image/png', 1).replace('data:image/png;base64,', '')
+          console.log(continueFaceDetect, '----')
           if (!continueFaceDetect) return
           this.faceDetect(imgUrl)
         }, 800)
@@ -253,9 +284,9 @@ class App extends React.Component {
       image_type:'BASE64',
       face_field:'quality',
     }, res => {
+      continueFaceDetect = true
       if (res.error_code !== 0) {
         message.warning('请将人脸移入框内', 1)
-        continueFaceDetect = true
         return
       }
       const completeness = res?.result?.face_list[0]?.quality?.completeness
@@ -282,8 +313,10 @@ class App extends React.Component {
       user_id: `face_${ userId }`,
     }, res => {
       if (res.error_code === 0) {
-        this.handleOnCloseModal('isModalVisible')
-        message.success('人脸设置成功', 1)
+        this.handleGetUserInfo(() => {
+          this.handleOnCloseModal('isModalVisible')
+          message.success('人脸设置成功', 1)
+        })
       }
     }, accessToken)
   }
@@ -330,10 +363,26 @@ class App extends React.Component {
     })
   }
 
+  handleGetUserInfo = callback => {
+    const { homeStore } = this.props
+    const { getUserInfo } = homeStore
+    const params = { }
+    getUserInfo(params, callback)
+  }
+
   render() {
     const {
-      mesg, chatMsg, userInfo, groupArr, currentChat, visible, roomUser, isModalVisible,
+      mesg,
+      chatMsg,
+      userInfo,
+      groupArr,
+      currentChat,
+      visible,
+      roomUser,
+      isModalVisible,
     } = this.state
+    const { homeStore } = this.props
+    const { faceloginStatus } = homeStore
     return (
       <Layout className='app-layout'>
         <Sider className='app-slider'>
@@ -348,7 +397,7 @@ class App extends React.Component {
                   { userInfo.inviteCode }
                   <CopyOutlined className='app-more' />
                 </p>
-                <p><Button onClick={ this.handleShowFaceLogin }>人脸登录设置</Button></p>
+                { !faceloginStatus && <p><Button onClick={ this.handleShowFaceLogin }>人脸登录设置</Button></p> }
                 {/* <Input className='app-header-input' prefix={ <SearchOutlined /> } placeholder='搜索' /> */}
               </div>
               <Spin spinning={ !groupArr.length } className='app-spinning'>
@@ -369,7 +418,7 @@ class App extends React.Component {
           <Content className='app-content'>
             <div className='chatContainer'>
               <div className='chatDv'>
-                <ul>
+                <ul className='chatUl' ref={ this.chatUlRef }>
                   {chatMsg[`room${ currentChat.value }`] && chatMsg[`room${ currentChat.value }`].map(({ msg, nickName, type }, index) => {
                     return (
                       <li className='chatli' key={ index }>

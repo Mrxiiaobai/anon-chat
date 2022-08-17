@@ -2,7 +2,12 @@ import { observable, action } from 'mobx'
 import moment from 'moment'
 import { notification } from 'antd'
 import {
-  getAccessToken, faceMatch, faceDetect, faceAdd, faceSearch, faceLogin,
+  getAccessToken,
+  faceMatch,
+  faceDetect,
+  faceAdd,
+  faceSearch,
+  faceLogin,
 } from '@services/face'
 import { SetLocalStorage, RemoveLocalStorage } from '@/utils/local'
 
@@ -13,35 +18,80 @@ class faceStore {
   @action
     getAccessToken = async (params, callback) => {
       const response = await getAccessToken(params)
+      const { code, message, data } = response
+      if (code !== 0) {
+        notification.error({
+          message:'错误通知',
+          description:message,
+        })
+        return
+      }
+
       SetLocalStorage('accessTokenInfo', {
-        accessToken:response.access_token,
+        accessToken:data.access_token,
         times:new Date().getTime(),
       })
-      callback(response.access_token)
+      callback(data.access_token)
     }
 
   @action
     matchFace = async (params, callback, access_token) => {
       const response = await faceMatch(params, { }, access_token)
-      callback(response)
+      const { code, message, data } = response
+      if (code !== 0) {
+        notification.error({
+          message:'错误通知',
+          description:message,
+        })
+        return
+      }
+
+      callback(data)
     }
 
   @action
     faceDetect = async (params, callback, access_token) => {
       const response = await faceDetect(params, { }, access_token)
-      callback(response)
+      const { code, message, data } = response
+      if (code !== 0) {
+        notification.error({
+          message:'错误通知',
+          description:message,
+        })
+        return
+      }
+
+      callback(data)
     }
 
   @action
     faceAdd = async (params, callback, access_token) => {
       const response = await faceAdd(params, { }, access_token)
-      callback(response)
+      const { code, message, data } = response
+      if (code !== 0) {
+        notification.error({
+          message:'错误通知',
+          description:message,
+        })
+        return
+      }
+
+      callback(data)
     }
 
   @action
     faceSearch = async (params, callback, access_token) => {
       const response = await faceSearch(params, { }, access_token)
-      callback(response)
+      const { code, message, data } = response
+      if (code !== 0) {
+        notification.error({
+          message:'错误通知',
+          description:message,
+        })
+        return
+      }
+
+      callback(data)
     }
 
   @action

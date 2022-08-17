@@ -1,7 +1,7 @@
 // main.js
 // Modules to control application life and create native browser window
 const {
-  app, BrowserWindow, ipcMain, Notification,
+  app, BrowserWindow, ipcMain, Notification, systemPreferences,
 } = require('electron')
 const path = require('path')
 // const url = require('url')
@@ -12,11 +12,15 @@ let loginWindow = null
 let mainWindow = null
 
 const browserObj = {
-  loginBrowserUrl:'http://localhost:3000/anon/login',
-  mainBrowserUrl:'http://localhost:3000/anon/home',
+  loginBrowserUrl:'https://configure.otosaas.com/anon/login',
+  mainBrowserUrl:'https://configure.otosaas.com/anon/home',
+  // loginBrowserUrl:'http://localhost:3000/anon/login',
+  // mainBrowserUrl:'http://localhost:3000/anon/home',
   loginBrowserParams:{
     width: 280,
     height: 400,
+    // width: 560,
+    // height: 800,
     fullscreen:false,
     fullscreenable:false,
     resizable:false,
@@ -78,7 +82,14 @@ app.whenReady().then(() => {
   const {
     loginBrowserParams, loginBrowserUrl, mainBrowserParams, mainBrowserUrl,
   } = browserObj
-  createWindow('login', loginBrowserParams, loginBrowserUrl)
+  console.log(systemPreferences.getMediaAccessStatus('camera'), '----')
+  if (systemPreferences.getMediaAccessStatus('camera') === 'granted') {
+    createWindow('login', loginBrowserParams, loginBrowserUrl)
+  } else {
+    systemPreferences.askForMediaAccess('camera')
+    createWindow('login', loginBrowserParams, loginBrowserUrl)
+  }
+
   ipcMain.on('close', () => {
     console.log('close')
     loginWindow.close()
@@ -90,7 +101,7 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow('login')
+    if (BrowserWindow.getAllWindows().length === 0) createWindow('login', loginBrowserParams, loginBrowserUrl)
   })
 })
 
