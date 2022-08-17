@@ -5,7 +5,7 @@ const electron = require('electron')
 const { contextBridge } = electron
 
 contextBridge.exposeInMainWorld('electronApi', {
-  ipcRenderer:electron.ipcRenderer
+  ipcRenderer:electron.ipcRenderer,
 })
 
 // 所有Node.js API都可以在预加载过程中使用。

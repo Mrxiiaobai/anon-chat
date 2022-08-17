@@ -1,9 +1,11 @@
+/* eslint-disable */
+
 /**
  *  保存LocalStorage
  *  @param    {String}    key
  *  @param    {String}    value
  */
- export const SetLocalStorage = (key: string, value: any) => {
+ export const SetLocalStorage = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -12,7 +14,7 @@
  *  @param    {String}    key
  *  @returns  {Object|String}
  */
-export const GetLocalStorage = (key: string): any=> {
+export const GetLocalStorage = key => {
   if (!key) return;
 
   let value = localStorage.getItem(key);
@@ -28,7 +30,7 @@ export const GetLocalStorage = (key: string): any=> {
  *  删除LocalStorage
  *  @param    {String}
  */
-export const RemoveLocalStorage = (key: string) => {
+export const RemoveLocalStorage = key => {
   if (!key) return;
 
   localStorage.removeItem(key);
